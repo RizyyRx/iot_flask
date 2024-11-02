@@ -2,6 +2,7 @@ from src.Database import Database
 from src import get_config
 from time import time
 from random import randint
+import bcrypt
 
 db = Database.get_connection()
 users = db.users # create a collection of users if it doesnt exists
@@ -15,10 +16,14 @@ class User:
     def register(username, password, confirm_password):
         if password != confirm_password:
             raise Exception("passwords do not match")
+        
+        password = password.encode() # encode pass before hashing
+        salt = bcrypt.gensalt() # generates salt
+        hashed_pass = bcrypt.hashpw(password,salt) # hashes password with salt
 
         id = users.insert_one({
             "username":username,
-            "password":password,
+            "password":hashed_pass,
             "registered_time":time(),
             "active": False,
             "activate_token": randint(10000,99999)
@@ -35,8 +40,15 @@ class User:
 
         if result:
 
-            #this method of checking pass is very insecure
-            if result['password'] == password: # alternate way: result.get('password') == password
+            # #this method of checking pass is very insecure
+            # if result['password'] == password: # alternate way: result.get('password') == password
+            #     return True
+            # else:
+            #     #TODO: use sessions for additional security
+            #     raise Exception("password is wrong")
+
+            hashed_pass=result['password']
+            if bcrypt.checkpw(password.encode(),hashed_pass):
                 return True
             else:
                 #TODO: use sessions for additional security
