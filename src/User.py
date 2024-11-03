@@ -14,6 +14,7 @@ class User:
 
     @staticmethod
     def register(username, password, confirm_password):
+        #TODO: avoid duplicate signups
         if password != confirm_password:
             raise Exception("passwords do not match")
         
@@ -22,7 +23,7 @@ class User:
         hashed_pass = bcrypt.hashpw(password,salt) # hashes password with salt
 
         id = users.insert_one({
-            "username":username,
+            "username":username, #TODO: make it as unique to avoid duplicate entries
             "password":hashed_pass,
             "registered_time":time(),
             "active": False,
@@ -49,6 +50,7 @@ class User:
 
             hashed_pass=result['password']
             if bcrypt.checkpw(password.encode(),hashed_pass):
+                #TODO: register a session and return a session id on successful login
                 return True
             else:
                 #TODO: use sessions for additional security

@@ -1,18 +1,17 @@
 from flask import Flask, redirect, url_for, request, render_template
 import os
 import math
-from src import check
-from src.User import User
-
-check()
 
 app = Flask(__name__) #app is an object being created of class Flask
 basename = '/iot' #use a base dir if needed and add it to app route
 
 @app.route(basename+'/') #decorator that binds url with a function
 def hello_world():
-   d={"username": whoami().strip(),"env": "wsl_kali"}
-   return render_template('helloworld.html',data=d)
+   return render_template('helloworld.html')   
+
+@app.route(basename+'/dashboard')
+def dashboard():
+   return render_template('dashboard.html') #render template automatically looks for dir named templates and loads respective files from it
 
 #runs whoami linux cmd and displays output (note that the output contains \n at the end of the string)
 @app.route(basename+'/whoami')
