@@ -1,4 +1,5 @@
 {
     "mongodb_connection_string":"mongodb://rizyy:password%40123@mongodb.selfmade.ninja/?authSource=users",
-    "mongodb_database":"rizyy_iot"
+    "mongodb_database":"rizyy_iot",
+    "basename":"/iot"
 }
