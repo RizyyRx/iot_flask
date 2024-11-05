@@ -2,6 +2,7 @@ from src.Database import Database
 from src import get_config
 from time import time
 from random import randint
+import binascii
 import bcrypt
 
 db = Database.get_connection()
@@ -49,6 +50,7 @@ class User:
             #     raise Exception("password is wrong")
 
             hashed_pass=result['password']
+            
             if bcrypt.checkpw(password.encode(),hashed_pass):
                 #TODO: register a session and return a session id on successful login
                 return True
