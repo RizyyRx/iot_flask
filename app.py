@@ -28,10 +28,11 @@ def auth():
          try:
             User.login(username,password)
             session['authenticated'] = True
-            return{
-               "message":"authenticated successfully",
-               "authenticated":True
-            } , 200 # ok
+            # return{
+            #    "message":"authenticated successfully",
+            #    "authenticated":True
+            # } , 200 # ok
+            return redirect(url_for('dashboard')) # if authed, redirect to dashboard page
          except Exception as e:
             return{
                "message":str(e),
@@ -47,10 +48,11 @@ def auth():
 @app.route(basename+'/deauth')
 def deauth():
    session['authenticated'] = False
-   return{
-      "message":"successfully deauthed",
-      "authenticated":False
-   }, 200
+   # return{
+   #    "message":"successfully deauthed",
+   #    "authenticated":False
+   # }, 200
+   return redirect(url_for('dashboard'))
 
 if __name__ == '__main__': #name == main checks that if this is the main file or not
    app.run(debug=True)
