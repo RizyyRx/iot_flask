@@ -1,12 +1,16 @@
-from src import get_config
-from src.User import User
+from mongogettersetter import MongoGetterSetter
+from src.Database import Database
 
-# uid = User.register("rizwan","yep123","yep123")
-# print(uid)
+db = Database.get_connection()
 
-try:
-    result = User.login("rizwan","yep1234")
-    if result:
-        print("login success")
-except Exception as e:
-    print("login failed",e)
+class SessionCollection(metaclass=MongoGetterSetter):
+    def __init__(self,id):
+        self._collection = db.sessions
+        self._filter_query = {"id":id}
+
+class Session:
+    def __init__(self,id):
+        self.id = id
+        self.collection = SessionCollection(id)
+
+sess = Session("uuid here")
