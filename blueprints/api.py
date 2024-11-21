@@ -1,8 +1,49 @@
 from src.User import User
 from src.Session import Session
+from src.Group import Group
+from src.API import API, APICollection
 from flask import Blueprint, redirect, url_for, request, render_template, session
 
 bp = Blueprint("apiv1",__name__,url_prefix="/api/v1")
+
+@bp.route("/create/key",methods=['POST'])
+def create_api_key():
+   name = request.form['name']
+   group = request.form['group']
+   remarks = request.form['remarks']
+
+   if session.get('authenticated'):
+      a = API.register_api_key(session, name, group, remarks)
+      return{
+         "key":a,
+         "message":"success"
+      }, 200
+   else:
+      return{
+         "message":"not authenticated"
+      }, 401
+
+@bp.route("/create/group",methods=['POST'])
+def create_group():
+   name = request.form['name']
+   description = request.form['description']
+
+   if(len(name) < 3) or (len(description) < 3):
+      return {
+         "message": "Name and Description must be atleast 3 characters",
+      }, 400
+
+   if session.get('authenticated'):
+      Group.register_group(name, description)
+      return{
+         'status':"success",
+         'message':'successfully created group ' + name
+      }, 200
+   else:
+      return{
+         'message':'not authenticated'
+      }, 401
+
 
 @bp.route('/register',methods=['POST'])
 def register():
@@ -31,6 +72,7 @@ def register():
 @bp.route('/auth',methods=['POST'])
 def auth():
    if session.get('authenticated'):
+      print(session)
       sess = Session(session['sessid']) # create a session instance with sessid present in flask's session object
       if sess.is_valid():
          return{

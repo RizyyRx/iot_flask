@@ -9,3 +9,7 @@ def home():
 @bp.route('/dashboard')
 def dashboard():
    return render_template('dashboard.html',session=session) #render template automatically looks for dir named templates and loads respective files from it
+
+@bp.route('/api_keys')
+def api_keys():
+   return render_template('api_keys.html',session=session)

@@ -42,7 +42,7 @@ class Session:
         2. api - api Key used for authentication
         """
 
-        if request is not None:
+        if request is not None: #means flask's request object is sent when user logs in
             request_info = {
                 'ip': request.remote_addr,
                 'user_agent': request.headers.get('User-Agent'),

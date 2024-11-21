@@ -6,7 +6,7 @@ import os
 import math
 from src import get_config
 from src.User import User
-from blueprints import home, api, files
+from blueprints import home, api, files, motion, dialogs
 
 '''
  * by using static_folder='assets', static_url_path=basename, now all the contents inside assets will be available in the basename iot/ in website.
@@ -19,7 +19,8 @@ app.secret_key = get_config("secret_key") # flask uses this key to auth session
 app.register_blueprint(home.bp)
 app.register_blueprint(api.bp)
 app.register_blueprint(files.bp)
-
+app.register_blueprint(motion.bp)
+app.register_blueprint(dialogs.bp)
 
 if __name__ == '__main__': #name == main checks that if this is the main file or not
    app.run(debug=True)
