@@ -1,4 +1,6 @@
 import json
+import hashlib
+
 
 def check():
     print("working good....")
@@ -13,3 +15,8 @@ def get_config(key):
         return config[key]
     else:
         raise Exception("The key {} is not found in config.json",format(key))
+
+def md5_hash(string):
+    hash_object = hashlib.md5(string.encode())
+    hash_hex = hash_object.hexdigest()
+    return hash_hex

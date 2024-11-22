@@ -2,20 +2,24 @@ from mongogettersetter import MongoGetterSetter
 from src.Database import Database
 from time import time
 from uuid import uuid4
+from src import md5_hash
 
 
 db = Database.get_connection()
 
 class APICollection(metaclass=MongoGetterSetter):
     def __init__(self,id):
-        self._collection = db.sessions
-        self._filter_query = {"id":id}
+        self._collection = db.api_keys
+        self._filter_query = {'$or': [
+            {'id': id},
+            {'hash': id}
+        ]}
 
 # when API object is created in register_api_key, it inherits the behavior defined by the metaclass MongoGetterSetter.
 class API:
     def __init__(self,id):
-        self.id = id
         self.collection = APICollection(id) # self.collection will have the getter/setter functionality defined in MongoGetterSetter
+        self.id = str(self.collection.id)
 
     def is_valid(self):
         login_time = self.collection.time
@@ -29,6 +33,16 @@ class API:
         # else:
         #     return False
 
+    #get all api keys registered by username 
+    @staticmethod
+    def get_all_keys(session):
+        if not session.get('authenticated') or not session.get('username'):
+            raise Exception("not authenticated")
+        
+        username = session.get("username")
+        collection = db.api_keys
+        result = collection.find({"username":username})
+        return result
     
     # registers api key entry in session collection on db with _type='api'
     @staticmethod
@@ -36,7 +50,7 @@ class API:
         if not session.get('authenticated') or not session.get('username'):
             raise Exception("User not authenticated")
         uuid = str(uuid4())
-        collection = db.sessions
+        collection = db.api_keys
         username = session.get('username')
 
         if request is not None:
@@ -53,6 +67,7 @@ class API:
 
         result = collection.insert_one({
             "id":uuid,
+            "hash": md5_hash(uuid),
             "username":username,
             "name":name,
             "group":group,
@@ -64,4 +79,4 @@ class API:
             "request":request_info
         })
 
-        return uuid # This uuid is the api key
+        return API(uuid) # This uuid is the api key

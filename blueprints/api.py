@@ -15,7 +15,8 @@ def create_api_key():
    if session.get('authenticated'):
       a = API.register_api_key(session, name, group, remarks)
       return{
-         "key":a,
+         "key": str(a.collection.id),
+         "hash": str(a.collection.hash),
          "message":"success"
       }, 200
    else:
