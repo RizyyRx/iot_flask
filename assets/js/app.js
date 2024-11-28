@@ -91,6 +91,7 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
                                   $.get('/api_keys/row?hash='+data.hash, function(data, status, xhr){
                                     if(status=="success"){
                                         $("#api_key_table").append(data);
+                                        addApiKeyRowListeners();
                                         //TODO: Check if we need to reinitialize click event for delete button, since its dynamically added to DOM.
                                     }
                                 });
@@ -111,23 +112,26 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
       });
   });
   
-  $('.btn-api-enable').on('click', function(){
-    var id = $(this).attr('id');
-    var status = $(this).is(':checked');
-    var row = $(this).parent().parent().parent();
-    console.log(row);
-    $.post('/api_keys/enable', {
-        'id': id,
-        'status': status
-    }, function(data, status, xhr){
-        if(data.status){
-            $(row).find('.api-status-badge').removeClass('bg-gradient-secondary').addClass('bg-gradient-success').html('ACTIVE');
-        } else {
-            $(row).find('.api-status-badge').removeClass('bg-gradient-success').addClass('bg-gradient-secondary').html('INACTIVE');
-        }
+  function addApiKeyRowListeners(){
+    $('.btn-api-enable').off('click');
+    $('.btn-api-enable').on('click', function(){
+        var id = $(this).attr('id');
+        var status = $(this).is(':checked');
+        var row = $(this).parent().parent().parent();
+        console.log(row);
+        $.post('/api_keys/enable', {
+            'id': id,
+            'status': status
+        }, function(data, status, xhr){
+            if(data.status){
+                $(row).find('.api-status-badge').removeClass('bg-gradient-secondary').addClass('bg-gradient-success').html('ACTIVE');
+            } else {
+                $(row).find('.api-status-badge').removeClass('bg-gradient-success').addClass('bg-gradient-secondary').html('INACTIVE');
+            }
+        });
     });
-});
-
+    
+    $('.btn-delete-api-key').off('click');
     $('.btn-delete-api-key').on('click', function(){
         var rowid = $(this).attr('data-rowid');
         $.get('/api_keys/row/delete_dialog?hash='+rowid, function(data, status, xhr){
@@ -155,6 +159,10 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
             d.show();
         })
     });
+}
+
+addApiKeyRowListeners();
+
 
 
   $('.btn-add-api-group').on('click', function(){ //for group, we put the necessary html here itself instead of seperate file like api_keys.html for api keys
