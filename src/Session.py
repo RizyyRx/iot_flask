@@ -64,7 +64,7 @@ class Session:
             "request":request_info
         })
 
-        return Session(uuid)
+        return Session(uuid) #this will return a session instance with id to login func,
 
 '''
 A FLOW OF WHAT HAPPENS WHEN USER LOGS IN :

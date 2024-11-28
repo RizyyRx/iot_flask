@@ -6,6 +6,7 @@ import os
 import math
 from src import get_config
 from src.User import User
+from src.API import API
 from blueprints import home, api, files, motion, dialogs
 
 '''
@@ -15,6 +16,29 @@ from blueprints import home, api, files, motion, dialogs
 '''
 application = app = Flask(__name__, static_folder='assets', static_url_path="/") #app is an object being created of class Flask  
 app.secret_key = get_config("secret_key") # flask uses this key to auth session
+
+@app.before_request
+def before_request_hook():
+   if session.get('type') == 'web': # leave if the session type is web, this check is only for api keys
+      return
+   
+   auth_header = request.headers.get('Authorization')
+   if auth_header:
+      auth_token = auth_header.split(" ")[1]
+      try:
+         api = API(auth_token)
+         validity = api.is_valid()
+         session['authenticated'] = True
+         session['username'] = api.collection.username
+         session['type'] = 'api'
+         session['sessid'] = None
+      except:
+         return "Unauthorized", 401
+
+   else:
+      session['authenticated'] = False
+      if 'username' in session:
+         del session['username']
 
 app.register_blueprint(home.bp)
 app.register_blueprint(api.bp)

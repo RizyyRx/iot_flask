@@ -29,7 +29,9 @@ def upload_bucket():
             'message':"upload_success",
             'filename':filename,
             'file_id':str(file_id),
-            'download_url':'/files/get/bucket'+filename,
+            'download_url':'/files/get/bucket/'+filename,
+            'stream_url':'/files/stream/'+filename,
+            'get_url':'files/get/'+filename,
             'org_filename':original_filename
         }, 200
     else:

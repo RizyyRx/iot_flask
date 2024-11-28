@@ -19,20 +19,23 @@ class APICollection(metaclass=MongoGetterSetter):
 class API:
     def __init__(self,id):
         self.collection = APICollection(id) # self.collection will have the getter/setter functionality defined in MongoGetterSetter
-        self.id = str(self.collection.id)
+        try:
+            self.id = str(self.collection.id)
+        except TypeError:
+            raise Exception("API Key not found")
 
     def is_valid(self):
         login_time = self.collection.time
         validity = self.collection.validity
-        if(validity == 0):
-            return True
-        now = time()
-        return now - login_time < validity
-        # ifnow - login_time < validity
-        #     return True
-        # else:
-        #     return False
-
+        if validity == 0:
+            return self.collection.active # if validity is 0, just return if active is true or false
+        else:
+            if self.collection.active: #if validity is not 0 and active is true, check validity status
+                now = time()
+                return now - login_time < validity
+            else: #if validity is not 0 and active is false, return false
+                return False 
+        
     #get all api keys registered by username 
     @staticmethod
     def get_all_keys(session):

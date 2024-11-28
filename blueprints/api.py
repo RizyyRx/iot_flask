@@ -96,7 +96,8 @@ def auth():
             #These are flask's session (session is flask's session object)
             session['authenticated'] = True
             session['username'] = username
-            session['sessid'] = sessid
+            session['sessid'] = sessid # put sessid, created when registering session in flask's session object. It will be used to reconstruct the session instance using id and check if its valid, if authenticated is True
+            session['type'] = 'web' # if user authenticated thru web, set this variable
 
             if 'redirect' in request.form and request.form['redirect'] == 'true':
                return redirect(url_for('home.dashboard')) # if authed, redirect to dashboard page

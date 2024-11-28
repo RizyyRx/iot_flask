@@ -80,7 +80,7 @@ class User:
                 '''
                 sess = Session.register_session(username, request=request)
 
-                return sess.id
+                return sess.id # sessid is returned to put it in flask's session object, so that it can be used to reconstruct session instance with this id and check for validity if authenticated is true
             else:
                 #TODO: use sessions for additional security
                 raise Exception("password is wrong")
