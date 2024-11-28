@@ -123,6 +123,7 @@ def auth():
 @bp.route('/deauth')
 def deauth():
    session['authenticated'] = False
+   session['type'] = None
    # return{
    #    "message":"successfully deauthed",
    #    "authenticated":False

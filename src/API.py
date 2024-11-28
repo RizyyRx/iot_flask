@@ -35,6 +35,9 @@ class API:
                 return now - login_time < validity
             else: #if validity is not 0 and active is false, return false
                 return False 
+
+    def delete(self):
+        self.collection.delete()
         
     #get all api keys registered by username 
     @staticmethod

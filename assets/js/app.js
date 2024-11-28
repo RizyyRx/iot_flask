@@ -128,6 +128,34 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
     });
 });
 
+    $('.btn-delete-api-key').on('click', function(){
+        var rowid = $(this).attr('data-rowid');
+        $.get('/api_keys/row/delete_dialog?hash='+rowid, function(data, status, xhr){
+            d = new Dialog("Delete API Key", data);
+            d.setButtons([
+                {
+                    "name": "Delete",
+                    "class": "btn-danger btn-delete-key",
+                    "onClick": function(event){
+                        $.get('/api_keys/row/delete?hash='+rowid, function(data, status, xhr){
+                            if(status == 'success'){
+                                var modal = $(event.data.modal);
+                                $(modal).modal('hide');
+                                $('#row-'+rowid).remove();
+                            }
+                        })
+                    }
+                },
+                {
+                    "name": "Cancel",
+                    "class": "btn-secondary",
+                    "dismiss": true
+                }
+            ])
+            d.show();
+        })
+    });
+
 
   $('.btn-add-api-group').on('click', function(){ //for group, we put the necessary html here itself instead of seperate file like api_keys.html for api keys
       d = new Dialog("Add Group", `

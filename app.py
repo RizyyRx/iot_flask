@@ -17,6 +17,7 @@ from blueprints import home, api, files, motion, dialogs
 application = app = Flask(__name__, static_folder='assets', static_url_path="/") #app is an object being created of class Flask  
 app.secret_key = get_config("secret_key") # flask uses this key to auth session
 
+
 @app.before_request
 def before_request_hook():
    if session.get('type') == 'web': # leave if the session type is web, this check is only for api keys
@@ -27,13 +28,12 @@ def before_request_hook():
       auth_token = auth_header.split(" ")[1]
       try:
          api = API(auth_token)
-         validity = api.is_valid()
-         session['authenticated'] = True
+         session['authenticated'] = api.is_valid() # if is valid, then auth is true
          session['username'] = api.collection.username
          session['type'] = 'api'
          session['sessid'] = None
-      except:
-         return "Unauthorized", 401
+      except Exception as e:
+         return "Unauthorized" + str(e), 401
 
    else:
       session['authenticated'] = False
