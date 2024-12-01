@@ -7,7 +7,7 @@ import math
 from src import get_config
 from src.User import User
 from src.API import API
-from blueprints import home, api, files, motion, dialogs
+from blueprints import home, api, files, motion, dialogs, devices, devices_api
 
 '''
  * by using static_folder='assets', static_url_path=basename, now all the contents inside assets will be available in the basename iot/ in website.
@@ -45,6 +45,9 @@ app.register_blueprint(api.bp)
 app.register_blueprint(files.bp)
 app.register_blueprint(motion.bp)
 app.register_blueprint(dialogs.bp)
+app.register_blueprint(devices.bp)
+app.register_blueprint(devices_api.bp)
+
 
 if __name__ == '__main__': #name == main checks that if this is the main file or not
    app.run(debug=True)

@@ -41,13 +41,17 @@ class API:
         
     #get all api keys registered by username 
     @staticmethod
-    def get_all_keys(session):
+    def get_all_keys(session, only_unlinked=False):
         if not session.get('authenticated') or not session.get('username'):
             raise Exception("not authenticated")
         
         username = session.get("username")
         collection = db.api_keys
-        result = collection.find({"username":username})
+        if only_unlinked:
+            query = {"username": username, "linked_device": None}
+        else:
+            query = {"username": username}
+        result = collection.find(query)
         return result
     
     # registers api key entry in session collection on db with _type='api'
@@ -82,7 +86,8 @@ class API:
             "validity":validity,
             "active":True,
             "type":_type,
-            "request":request_info
+            "request":request_info,
+            "linked_device": None
         })
 
         return API(uuid) # This uuid is the api key

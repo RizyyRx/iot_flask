@@ -59,6 +59,46 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
   
       node.addEventListener('animationend', handleAnimationEnd, {once: true});
     });
+
+    $('.btn-add-device').on('click', function(){
+        $.get("/devices/add", function(data, status, xhr){
+            if(status == "success"){
+                d = new Dialog("Add Device", data);
+                d.setButtons([
+                    {
+                        "name": "Register",
+                        "class": "btn-success btn-register-device",
+                        "onClick": function(event){
+                            modal = $(event.data.modal);
+                            $.post('/api/devices/register', {
+                                name: modal.find('#device-name').val(),
+                                type: modal.find('#device-type').val(),
+                                api: modal.find('#device-api').val(),
+                                remarks: modal.find('#device-remarks').val()
+                            }, function(data, status, xhr){
+                                if(status == "success"){
+                                    t = new Toast("Device Registered", "now", "Device has been registered successfully.");
+                                    t.show();
+                                }
+                                $(event.data.modal).modal('hide');
+                            }).fail(function(xhr, status, error){
+                                console.log(xhr);
+                                t = new Toast("Error", "now", xhr.responseJSON.error);
+                                t.show();
+                            });
+                        }
+                    },
+                    {
+                        "name": "Cancel",
+                        "class": "btn-secondary",
+                        "dismiss": true
+                    }
+                ]);
+                d.show();
+            }
+        });
+    });
+    
   
   $('.btn-add-api-key').on('click', function(){
       $.get('/api/dialogs/api_keys', function(data, status, xhr){
