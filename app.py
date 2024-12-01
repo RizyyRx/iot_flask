@@ -21,6 +21,7 @@ app.secret_key = get_config("secret_key") # flask uses this key to auth session
 @app.before_request
 def before_request_hook():
    if session.get('type') == 'web': # leave if the session type is web, this check is only for api keys
+      print("yep")
       return
    
    auth_header = request.headers.get('Authorization')

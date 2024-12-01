@@ -14,6 +14,7 @@ def devices_add():
         dtype = request.form['type']
         api_key = request.form['api']
         remarks = request.form['remarks']
+        return_json = 'json' in request.form
         
         if len(name) < 3:
             return {
@@ -40,10 +41,14 @@ def devices_add():
         api = API(api_key)
         if(api.is_valid()):
             dev = Device.register_device(name, session.get('username'), dtype, api_key, remarks);
-            return {
-                "message": "Success",
-                "id": dev.id
-            }, 200
+            if return_json:
+                return {
+                    "message": "Device Registered",
+                    "id": dev.uuid
+                }, 200
+            else:
+                return render_template('devices/card.html', device=dev.collection)
+
         else:
             return {
                 "error": "Invalid API Key",

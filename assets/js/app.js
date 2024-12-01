@@ -79,6 +79,7 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
                                 if(status == "success"){
                                     t = new Toast("Device Registered", "now", "Device has been registered successfully.");
                                     t.show();
+                                    $('#devices_index row').append(data);
                                 }
                                 $(event.data.modal).modal('hide');
                             }).fail(function(xhr, status, error){

@@ -23,6 +23,10 @@ class API:
             self.id = str(self.collection.id)
         except TypeError:
             raise Exception("API Key not found")
+            
+    def get_device(self):
+        device = db.devices.find_one({"api": self.collection.hash})
+        return device
 
     def is_valid(self):
         login_time = self.collection.time
