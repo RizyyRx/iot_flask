@@ -290,6 +290,8 @@ const viewer = new Viewer(images, {
     }
 });
 
+
+
 $('#raspi-cam-1').on('click', function(e){
     viewer.show();
 });

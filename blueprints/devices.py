@@ -35,6 +35,29 @@ def devices_mcamera(id):
     return render_template('devices/mcamera.html', device=dev, latest=latest, images=image_urls)
 
 
+
+# @bp.route("/mcamera/<id>/next_images/<start_index>")
+# def fetch_more_images(id, start_index):
+#     dev = MotionCamera(id)
+#     db = Database.get_connection()
+
+#     # Convert start_index to integer
+#     start_index = int(start_index)
+
+#     # Fetch the next 6 images, skipping the images before the start_index
+#     result = db.motion_capture.find({
+#         "device_id": id,
+#         "owner": session.get('username')
+#     }).sort([("time", -1)]).skip(start_index).limit(6)
+
+#     # Check if images exist and extract URLs
+#     image_urls = [{'url': image['faccess']['get_url']} for image in result]
+
+#     # Return the images as JSON response
+#     return jsonify(image_urls)
+
+
+
 @bp.route("/add")
 def devices_add():
     return render_template('devices/add.html', session=session, apis=API.get_all_keys(session, True), dtypes=get_config('devices'))
