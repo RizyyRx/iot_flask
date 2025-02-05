@@ -21,11 +21,11 @@ app.secret_key = get_config("secret_key") # flask uses this key to auth session
 @app.before_request
 def before_request_hook():
    if session.get('type') == 'web': # leave if the session type is web, this check is only for api keys
-      print("yep")
       return
    
-   auth_header = request.headers.get('Authorization')
+   auth_header = request.headers.get('X-Authorization')
    if auth_header:
+      print("its thru auth")
       auth_token = auth_header.split(" ")[1]
       try:
          api = API(auth_token)
@@ -51,4 +51,4 @@ app.register_blueprint(devices_api.bp)
 
 
 if __name__ == '__main__': #name == main checks that if this is the main file or not
-   app.run(debug=True)
+   app.run(host="0.0.0.0", port=5000,debug=True)

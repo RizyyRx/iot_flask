@@ -2,8 +2,8 @@
     <div class="card">
         <div class="card-body">
         <h5 class="card-title">{{device.name}}</h5>
-        <p class="card-text">{{device.type}}</p>
-        <a href="#" class="btn btn-primary">Manage</a>
+        <p class="card-text">Type ID: {{device.type}}</p>
+        <a href="/devices/{{device.type}}/{{device.id}}" class="btn btn-primary">Manage</a>
         </div>
     </div>
 </div>
