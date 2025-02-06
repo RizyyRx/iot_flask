@@ -260,37 +260,6 @@ addApiKeyRowListeners();
   
   });
 
-  function apiCall(){
-    //do network calls and fetch more images
-    return `
-    <li><img src="https://picsum.photos/id/1/5000/3333" alt="Picture 1"></li>
-    <li><img src="https://picsum.photos/id/4/5000/3333" alt="Picture 2"></li>
-    <li><img src="https://picsum.photos/id/7/4728/3168" alt="Picture 3"></li>
-    <li><img src="https://picsum.photos/id/1/5000/3333" alt="Picture 1"></li>
-    <li><img src="https://picsum.photos/id/4/5000/3333" alt="Picture 2"></li>
-    <li><img src="https://picsum.photos/id/7/4728/3168" alt="Picture 3"></li>
-    `
-}
-
-const images = document.getElementById('images');
-const viewer = new Viewer(images, {
-    loop: true,
-    interval: 500,
-    view: function(event){
-        console.log((event.detail.index + 1) + " / " +viewer.length);
-        var cur_image = event.detail.index + 1;
-        var length = viewer.length;
-        var leftover = 1;
-        
-        if(length - cur_image <= leftover){
-            console.log("now we can add more images");
-            $(images).append(apiCall());
-            viewer.update();
-        }
-    }
-});
-
-
 
 $('#raspi-cam-1').on('click', function(e){
     viewer.show();
