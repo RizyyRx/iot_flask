@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% include "_head.html" %}
+<body class="g-sidenav-show bg-dark text-warning">
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        
+        <!-- Navbar -->
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container-fluid d-flex justify-content-end">
+                <a href="/dashboard" class="btn text-white me-2 shadow" style="background-color: #ff8c00; border-color: #ff8c00;">
+                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                </a>
+                <a href="/signup" class="btn text-white shadow" style="background-color: #ff8c00; border-color: #ff8c00;">
+                    <i class="fas fa-user-plus me-1"></i> Sign Up
+                </a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="container d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+            <h1 class="fw-bold mt-n5" style="color: #ff8c00; font-size: 3rem;">Welcome to IoT Cloud</h1>
+            <p class="lead text-white-50">Seamlessly connect and manage your IoT devices with ease.</p>
+            
+            <!-- Dashboard Button -->
+            <a href="/dashboard" class="btn text-white mt-3 shadow-lg" style="background-color: #ff8c00; border-color: #ff8c00;">
+                <i class="fas fa-tachometer-alt me-1"></i> Go to Dashboard
+            </a>
+
+        <!-- Features Section -->
+        <div class="container mt-5">
+            <div class="row text-white">
+                <div class="col-md-4 text-center">
+                    <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255, 140, 0, 0.1); backdrop-filter: blur(5px); border: 1px solid #ff8c00;">
+                        <i class="fas fa-network-wired fa-3x text-warning mb-2" style="color: #ff8c00;"></i>
+                        <h5 style="color: #ff8c00;">Seamless Connectivity</h5>
+                        <p class="text-white-50">Connect your IoT devices effortlessly.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255, 140, 0, 0.1); backdrop-filter: blur(5px); border: 1px solid #ff8c00;">
+                        <i class="fas fa-lock fa-3x text-warning mb-2"></i>
+                        <h5 style="color: #ff8c00;">Secure & Reliable</h5>
+                        <p class="text-white-50">Industry-leading security for your data.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255, 140, 0, 0.1); backdrop-filter: blur(5px); border: 1px solid #ff8c00;">
+                        <i class="fas fa-chart-line fa-3x text-warning mb-2"></i>
+                        <h5 style="color: #ff8c00;">Real-Time Analytics</h5>
+                        <p class="text-white-50">Monitor device performance instantly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    {% include "_dummy_modal.html" %}
+    <!-- Core JS Files -->
+    {% include "_corejs.html" %}
+    
+    <!-- FontAwesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

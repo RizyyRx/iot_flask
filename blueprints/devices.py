@@ -12,7 +12,9 @@ bp = Blueprint("devices", __name__, url_prefix="/devices")
 
 @bp.route("/")
 def devices_home():
-    devices = Device.get_devices()
+    if not session.get('authenticated') or not session.get('username'):
+            raise Exception("not authenticated")
+    devices = Device.get_devices(session.get("username"))
     return render_template('devices.html', session=session, devices=devices)
 
 @bp.route("/mcamera/<id>")

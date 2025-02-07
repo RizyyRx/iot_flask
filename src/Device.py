@@ -50,6 +50,6 @@ class Device:
         return Device(uuid)
     
     @staticmethod
-    def get_devices():
+    def get_devices(username):
         collection = db.devices
-        return collection.find({})
+        return collection.find({"user":username})
