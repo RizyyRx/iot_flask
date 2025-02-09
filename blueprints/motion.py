@@ -46,6 +46,7 @@ def capture_motion():
                 'type': 'success'
             }
             mc.save_capture(file_id, faccess)
+            API.send_telegram_alert()
             return faccess, 200
     else:
         return {

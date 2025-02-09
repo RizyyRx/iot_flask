@@ -32,7 +32,7 @@ def check():
     print("working good....")
 
 def get_config(key):
-    config_file = "/home/rizwankendo/flask/config.json"
+    config_file = "/home/rizwankendo/flask_config.json"
     file = open(config_file,"r")
     config = json.load(file) # json load converts json data to python dictionary
     file.close() # close file after reading

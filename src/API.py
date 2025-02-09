@@ -3,7 +3,11 @@ from src.Database import Database
 from time import time
 from uuid import uuid4
 from src import md5_hash
+from src import get_config
+import requests
 
+# Global variable to store the last alert timestamp
+last_alert_time = 0  # Initially set to 0
 
 db = Database.get_connection()
 
@@ -115,3 +119,29 @@ class API:
         })
 
         return API(uuid) # This uuid is the api key
+
+    def send_telegram_alert():
+        global last_alert_time  # Allow modification of the global variable
+        
+        current_time = time()  # Get current timestamp
+        cooldown = 10  # 5 minutes in seconds
+
+        # Check if 5 minutes have passed since the last alert
+        if current_time - last_alert_time < cooldown:
+            print("[INFO] Alert suppressed: 5-minute cooldown is active.")
+            return  # Exit function without sending an alert
+
+        try:
+            bot_token = get_config("bot_token")
+            chat_id = get_config("chat_id")
+            message = "🚨 Motion detected! Check your camera now on the website."
+            url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+            data = {"chat_id": chat_id, "text": message}
+
+            response = requests.post(url, data=data, timeout=10)  # 10 sec network timeout
+            response.raise_for_status()  # Raises an error for HTTP errors
+
+            last_alert_time = current_time  # Update last alert time after successful send
+
+        except requests.exceptions.RequestException as e:
+            print(f"[ERROR] Failed to send Telegram alert: {e}")
