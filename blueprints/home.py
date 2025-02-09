@@ -1,5 +1,6 @@
 from flask import Blueprint, redirect, url_for, request, render_template, session
 from src.User import User
+from src.Device import Device
 from src.Group import Group
 from src.API import API
 from src import md5_hash, time_ago, mask
@@ -12,7 +13,10 @@ def home():
 
 @bp.route('/dashboard')
 def dashboard():
-   return render_template('dashboard.html',session=session) #render template automatically looks for dir named templates and loads respective files from it
+   keys_count = API.get_keys_count(session)
+   device_count = Device.get_devices_count(session)
+   images_count = API.get_images_count(session)
+   return render_template('dashboard.html',session=session,keys_count=keys_count,device_count=device_count,images_count=images_count) #render template automatically looks for dir named templates and loads respective files from it
 
 @bp.route('/signup')
 def signup():

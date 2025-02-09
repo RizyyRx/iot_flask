@@ -45,7 +45,7 @@ class API:
         
     #get all api keys registered by username 
     @staticmethod
-    def get_all_keys(session, only_unlinked=False):
+    def get_all_keys(session, only_unlinked=False): #only_unlinked is false by default, if set to true explicitly, it will filter api keys with only unlinked api keys
         if not session.get('authenticated') or not session.get('username'):
             raise Exception("not authenticated")
         
@@ -57,7 +57,27 @@ class API:
             query = {"username": username}
         result = collection.find(query)
         return result
-    
+
+    @staticmethod
+    def get_keys_count(session):
+        if not session.get('authenticated') or not session.get('username'):
+            raise Exception("not authenticated")
+        
+        username = session.get("username")
+        collection = db.api_keys
+        result = collection.count_documents({"username":username})
+        return result
+
+    @staticmethod
+    def get_images_count(session):
+        if not session.get('authenticated') or not session.get('username'):
+            raise Exception("not authenticated")
+        
+        username = session.get("username")
+        collection = db.motion_capture
+        result = collection.count_documents({"owner":username})
+        return result
+
     # registers api key entry in session collection on db with _type='api'
     @staticmethod
     def register_api_key(session, name, group, remarks, request=None, validity=0, _type="api"):
