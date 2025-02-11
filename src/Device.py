@@ -56,9 +56,8 @@ class Device:
 
     @staticmethod
     def get_devices_count(session):
-        if not session.get('authenticated') or not session.get('username'):
-            raise Exception("not authenticated")
-        
-        username = session.get("username")
-        collection = db.devices
-        return collection.count_documents({"user":username})
+        if  session.get('authenticated') or  session.get('username'):
+       
+            username = session.get("username")
+            collection = db.devices
+            return collection.count_documents({"user":username})

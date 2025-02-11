@@ -64,23 +64,19 @@ class API:
 
     @staticmethod
     def get_keys_count(session):
-        if not session.get('authenticated') or not session.get('username'):
-            raise Exception("not authenticated")
-        
-        username = session.get("username")
-        collection = db.api_keys
-        result = collection.count_documents({"username":username})
-        return result
+        if session.get('authenticated') or session.get('username'):
+            username = session.get("username")
+            collection = db.api_keys
+            result = collection.count_documents({"username":username})
+            return result
 
     @staticmethod
     def get_images_count(session):
-        if not session.get('authenticated') or not session.get('username'):
-            raise Exception("not authenticated")
-        
-        username = session.get("username")
-        collection = db.motion_capture
-        result = collection.count_documents({"owner":username})
-        return result
+        if session.get('authenticated') or session.get('username'):
+            username = session.get("username")
+            collection = db.motion_capture
+            result = collection.count_documents({"owner":username})
+            return result
 
     # registers api key entry in session collection on db with _type='api'
     @staticmethod
