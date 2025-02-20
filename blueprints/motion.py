@@ -7,6 +7,7 @@ from gridfs import GridFS, GridFSBucket
 from src.Database import Database
 import mimetypes
 import uuid
+import threading
 
 
 bp = Blueprint("motion",__name__,url_prefix="/api/motion")
@@ -36,8 +37,8 @@ def capture_motion():
             file_id = fs.upload_from_stream(filename, file, metadata=metadata)
             mc = MotionCamera(device_id)
 
-            # Run Face Comparison
-            matched_face, similarity = API.compare_faces(file_id, fs)
+            # Run face check in a background thread
+            threading.Thread(target=API.compare_faces, args=(file_id, fs)).start()
             faccess = {
                 'message': "Upload Success",
                 'file_id': str(file_id),
@@ -45,9 +46,7 @@ def capture_motion():
                 'download_url': '/files/download/'+filename,
                 'stream_url': '/files/stream/'+filename,
                 'get_url': '/files/get/'+filename,
-                'type': 'success',
-                'face_match': matched_face,
-                'similarity_score': similarity
+                'type': 'success'
             }
             mc.save_capture(file_id, faccess)
             API.send_telegram_alert()

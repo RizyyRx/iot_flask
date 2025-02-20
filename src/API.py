@@ -167,15 +167,15 @@ class API:
         
         try:
             # Fetch the image from GridFS
-            file_data = fs.open_download_stream(file_id)
-            image_bytes = file_data.read()
-            file_data.close()
+            with fs.open_download_stream(file_id) as file_data:
+                image_bytes = file_data.read()
 
             # Convert image bytes to numpy array
             try:
                 image = Image.open(BytesIO(image_bytes)).convert("RGB")  # Ensure RGB mode
             except UnidentifiedImageError:
-                return "Invalid or Unsupported Image Format", None
+                print("[ERROR] Invalid or Unsupported Image Format")
+                return
             
             image = np.array(image)
 
@@ -184,7 +184,8 @@ class API:
             reference_encodings = face_recognition.face_encodings(reference_image)
 
             if not reference_encodings:
-                return "No face detected in reference image", None
+                print("[ERROR] No face detected in reference image")
+                return
 
             reference_encoding = reference_encodings[0]  # Use the first detected face
 
@@ -192,7 +193,8 @@ class API:
             captured_encodings = face_recognition.face_encodings(image)
 
             if not captured_encodings:
-                return "No face detected in uploaded image", None
+                print("[ERROR] No face detected in uploaded image")
+                return
 
             # Compare with multiple detected faces
             matched_faces = []
@@ -209,6 +211,8 @@ class API:
                 best_match = max(matched_faces)  # Get the highest similarity score
                 last_success_time = time()  # Update timestamp
 
+                print(f"[INFO] Face match detected. Similarity Score: {round(best_match, 2)}")
+
                 #send telegram alert for face match found
                 try:
                     bot_token = get_config("bot_token")
@@ -220,11 +224,13 @@ class API:
                     response = requests.post(url, data=data, timeout=10)  # 10 sec network timeout
                     response.raise_for_status()  # Raises an error for HTTP errors
 
+                    print("[INFO] Face match detected. Telegram alert sent.")
+
                 except requests.exceptions.RequestException as e:
                     print(f"[ERROR] Failed to send Telegram alert: {e}")
-                return "Matched", round(best_match, 2)  # Return only when a match is found
 
-            return "No Match", 0.0
+            else:
+                print("[INFO] No face match found. Similarity Score: 0.0")
 
         except Exception as e:
-            return f"Error: {str(e)}", None
+            print(f"[ERROR] Unexpected error: {str(e)}")
