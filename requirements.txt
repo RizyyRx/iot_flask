@@ -3,3 +3,4 @@ mongogettersetter
 pika
 pymongo
 bcrypt
+requests

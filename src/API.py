@@ -5,6 +5,15 @@ from uuid import uuid4
 from src import md5_hash
 from src import get_config
 import requests
+import mimetypes
+import face_recognition
+import os
+from PIL import Image
+import numpy as np
+from io import BytesIO
+
+# Global variable to track the last successful match time and result
+last_success_time = 0
 
 # Global variable to store the last alert timestamp
 last_alert_time = 0  # Initially set to 0
@@ -141,3 +150,81 @@ class API:
 
         except requests.exceptions.RequestException as e:
             print(f"[ERROR] Failed to send Telegram alert: {e}")
+
+    def compare_faces(file_id, fs):
+        """ Extract image from GridFS and compare it with a reference face.
+            If a positive match is found, prevent running again for 1 minute.
+        """
+        global last_success_time
+        cooldown_period = 10  # timeout in seconds
+
+        # Check if the function was called recently after a successful match
+        if time() - last_success_time < cooldown_period:
+            return None, None  # Do nothing during timeout
+
+        # Reference Image Path
+        reference_image_path = r"D:\flask\reference.jpg"
+        
+        try:
+            # Fetch the image from GridFS
+            file_data = fs.open_download_stream(file_id)
+            image_bytes = file_data.read()
+            file_data.close()
+
+            # Convert image bytes to numpy array
+            try:
+                image = Image.open(BytesIO(image_bytes)).convert("RGB")  # Ensure RGB mode
+            except UnidentifiedImageError:
+                return "Invalid or Unsupported Image Format", None
+            
+            image = np.array(image)
+
+            # Load the reference image
+            reference_image = face_recognition.load_image_file(reference_image_path)
+            reference_encodings = face_recognition.face_encodings(reference_image)
+
+            if not reference_encodings:
+                return "No face detected in reference image", None
+
+            reference_encoding = reference_encodings[0]  # Use the first detected face
+
+            # Get encodings from the uploaded image
+            captured_encodings = face_recognition.face_encodings(image)
+
+            if not captured_encodings:
+                return "No face detected in uploaded image", None
+
+            # Compare with multiple detected faces
+            matched_faces = []
+
+            for captured_encoding in captured_encodings:
+                match = face_recognition.compare_faces([reference_encoding], captured_encoding)
+                distance = face_recognition.face_distance([reference_encoding], captured_encoding)[0]
+                similarity_score = 1 - min(distance, 1.0)  # Ensure it stays within 0-1 range
+
+                if match[0]:
+                    matched_faces.append(similarity_score)
+
+            if matched_faces:
+                best_match = max(matched_faces)  # Get the highest similarity score
+                last_success_time = time()  # Update timestamp
+
+                #send telegram alert for face match found
+                try:
+                    bot_token = get_config("bot_token")
+                    chat_id = get_config("chat_id")
+                    message = "similar face detected"
+                    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+                    data = {"chat_id": chat_id, "text": message}
+
+                    response = requests.post(url, data=data, timeout=10)  # 10 sec network timeout
+                    response.raise_for_status()  # Raises an error for HTTP errors
+
+                except requests.exceptions.RequestException as e:
+                    print(f"[ERROR] Failed to send Telegram alert: {e}")
+                return "Matched", round(best_match, 2)  # Return only when a match is found
+
+            return "No Match", 0.0
+
+        except Exception as e:
+            return f"Error: {str(e)}", None
