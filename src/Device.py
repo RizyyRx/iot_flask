@@ -45,6 +45,8 @@ class Device:
             "registered_on": time(),
             "api": api_key,
             "last_seen": None,
+            "device_status":"on",
+            "sleep_time": None
         })
         
         return Device(uuid)
@@ -61,3 +63,4 @@ class Device:
             username = session.get("username")
             collection = db.devices
             return collection.count_documents({"user":username})
+

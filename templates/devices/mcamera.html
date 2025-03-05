@@ -18,6 +18,31 @@
             <a href="/devices/images" class="btn btn-primary">View All Captures</a>
         </div>
     </div>
+    <div class="container mt-4">
+        <div class="card p-4 shadow-lg">
+            <h4 class="mb-3">Device Settings</h4>
+            <form id="settingsForm" method="POST">
+                <!-- Camera Status -->
+                <div class="mb-3">
+                    <label for="cameraStatus" class="form-label">Camera Status</label>
+                    <select class="form-select" id="cameraStatus" name="camera_status" onchange="toggleSleepTime()">
+                        <option value="on">On</option>
+                        <option value="off">Off</option>
+                        <option value="sleep">Sleep</option>
+                    </select>
+                </div>
+            
+                <!-- Sleep Time (Hidden by Default) -->
+                <div class="mb-3" id="sleepTimeContainer" style="display: none;">
+                    <label for="sleepTime" class="form-label">Sleep Time (minutes)</label>
+                    <input type="number" class="form-control" id="sleepTime" name="sleep_time" min="1" placeholder="Enter minutes">
+                </div>
+            
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Hidden list for images -->

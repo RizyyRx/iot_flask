@@ -17,10 +17,32 @@ def devices_home():
     devices = Device.get_devices(session.get("username"))
     return render_template('devices.html', session=session, devices=devices)
 
-@bp.route("/mcamera/<id>")
+@bp.route("/mcamera/<id>",methods=["GET", "POST"])
 def devices_mcamera(id):
     dev = MotionCamera(id)
     db = Database.get_connection()
+
+     # Handle device settings update when form is submitted
+    if request.method == "POST":
+        camera_status = request.form.get("camera_status")
+        sleep_time = request.form.get("sleep_time")
+
+        if not camera_status:
+            return jsonify({"error": "Camera status is required"}), 400
+
+        # Prepare update fields
+        update_fields = {"device_status": camera_status}
+        if sleep_time:
+            update_fields["sleep_time"] = int(sleep_time)
+
+        # Update the database
+        update_result = db.devices.update_one(
+            {"id": id, "user": session.get('username')},
+            {"$set": update_fields}
+        )
+
+        if update_result.matched_count == 0:
+            return jsonify({"error": "Device not found"}), 404
 
     # Fetch the first set of images (6 images or fewer if less than 6 are available)
     result = db.motion_capture.find({
