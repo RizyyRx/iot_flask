@@ -11,6 +11,7 @@ import threading
 
 
 bp = Blueprint("motion",__name__,url_prefix="/api/motion")
+db = Database.get_connection()
 
 @bp.route("/capture", methods=['POST'])
 def capture_motion():
@@ -37,8 +38,24 @@ def capture_motion():
             file_id = fs.upload_from_stream(filename, file, metadata=metadata)
             mc = MotionCamera(device_id)
 
-            # Run face check in a background thread
-            threading.Thread(target=API.compare_faces, args=(file_id, fs)).start()
+            result = db.devices.find_one({"user":session.get("username"),"id":device_id})
+            bot_token=result["bot_token"]
+            chat_id=result["chat_id"]
+            print(f"aimode_status:{result["ai_mode"]}")
+
+            if result["ai_mode"] == "on":
+                if result["sleep_on_face_detection"] == "yes":
+                    sleep_on_face_detection_status = "yes"
+                else:
+                    sleep_on_face_detection_status = "no"
+                face_detection_sleep_time=result["face_detection_sleep_time"]
+                username = str(session.get("username"))
+
+                # Run face check in a background thread
+                threading.Thread(target=API.compare_faces, args=(file_id, fs, username, device_id, sleep_on_face_detection_status, face_detection_sleep_time)).start()
+            else:
+                print("ai mode is off, not running face check")
+
             faccess = {
                 'message': "Upload Success",
                 'file_id': str(file_id),
@@ -49,7 +66,8 @@ def capture_motion():
                 'type': 'success'
             }
             mc.save_capture(file_id, faccess)
-            API.send_telegram_alert()
+            if bot_token and chat_id:
+                API.send_telegram_alert(bot_token=bot_token, chat_id=chat_id)
             return faccess, 200
     else:
         return {

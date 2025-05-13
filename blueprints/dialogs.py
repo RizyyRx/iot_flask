@@ -7,5 +7,6 @@ bp = Blueprint("api_dialogs",__name__,url_prefix="/api/dialogs")
 
 @bp.route("/api_keys")
 def api_keys():
-    groups = Group.get_groups()
+    username = session.get("username")
+    groups = Group.get_groups(username)
     return render_template("/dialogs/api_keys.html", session=session, groups=groups)

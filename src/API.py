@@ -125,7 +125,8 @@ class API:
 
         return API(uuid) # This uuid is the api key
 
-    def send_telegram_alert():
+    def send_telegram_alert(bot_token, chat_id):
+
         global last_alert_time  # Allow modification of the global variable
         
         current_time = time()  # Get current timestamp
@@ -137,8 +138,6 @@ class API:
             return  # Exit function without sending an alert
 
         try:
-            bot_token = get_config("bot_token")
-            chat_id = get_config("chat_id")
             message = "🚨 Motion detected! Check your camera now on the website."
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
             data = {"chat_id": chat_id, "text": message}
@@ -151,10 +150,11 @@ class API:
         except requests.exceptions.RequestException as e:
             print(f"[ERROR] Failed to send Telegram alert: {e}")
 
-    def compare_faces(file_id, fs):
+    def compare_faces(file_id, fs, username, device_id, sleep_on_face_detection_status="no", face_detection_sleep_time = None):
         """ Extract image from GridFS and compare it with a reference face.
             If a positive match is found, prevent running again for 1 minute.
         """
+        print("running face check...")
         global last_success_time
         cooldown_period = 10  # timeout in seconds
 
@@ -213,13 +213,22 @@ class API:
 
                 print(f"[INFO] Face match detected. Similarity Score: {round(best_match, 2)}")
 
+                if sleep_on_face_detection_status == "yes":
+                    update_result = db.devices.update_one(
+                        {"id": device_id, "user": username},
+                        {"$set": {"device_status":"sleep","sleep_time":face_detection_sleep_time}}
+                    )
+
+                    if update_result.matched_count == 0:
+                        return jsonify({"error": "Device not found"}), 404
+                    
+                result = db.devices.find_one({"user":username,"id":device_id})
+
                 #send telegram alert for face match found
                 try:
-                    bot_token = get_config("bot_token")
-                    chat_id = get_config("chat_id")
                     message = "similar face detected"
-                    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-                    data = {"chat_id": chat_id, "text": message}
+                    url = f"https://api.telegram.org/bot{result['bot_token']}/sendMessage"
+                    data = {"chat_id": result['chat_id'], "text": message}
 
                     response = requests.post(url, data=data, timeout=10)  # 10 sec network timeout
                     response.raise_for_status()  # Raises an error for HTTP errors

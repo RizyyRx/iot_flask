@@ -46,7 +46,12 @@ class Device:
             "api": api_key,
             "last_seen": None,
             "device_status":"on",
-            "sleep_time": None
+            "sleep_time": None,
+            "ai_mode": "off",
+            "face_detection_sleep_time": None,
+            "sleep_on_face_detection": "no",
+            "chat_id":None,
+            "bot_token":None
         })
         
         return Device(uuid)

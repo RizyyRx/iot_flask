@@ -28,6 +28,7 @@ def create_api_key():
 def create_group():
    name = request.form['name']
    description = request.form['description']
+   username = session.get('username')
 
    if(len(name) < 3) or (len(description) < 3):
       return {
@@ -35,7 +36,7 @@ def create_group():
       }, 400
 
    if session.get('authenticated'):
-      Group.register_group(name, description)
+      Group.register_group(name, description,username)
       return{
          'status':"success",
          'message':'successfully created group ' + name

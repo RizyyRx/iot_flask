@@ -22,11 +22,12 @@ class Group:
         self.id = self.collection.id
 
     @staticmethod
-    def register_group(name, description):
+    def register_group(name, description,username):
         uuid = str(uuid4())
         collection = db.groups
 
         result = collection.insert_one({
+            "username":username,
             "id":uuid,
             "name":name,
             "description":description,
@@ -37,6 +38,6 @@ class Group:
         return Group(uuid)
 
     @staticmethod
-    def get_groups():
+    def get_groups(username):
         collection = db.groups
-        return collection.find({})
+        return collection.find({"username":username})

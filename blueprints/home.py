@@ -24,17 +24,19 @@ def signup():
 
 @bp.route('/api_keys')
 def api_keys():
-   groups = list(Group.get_groups())
+   username = session.get('username')
+   groups = list(Group.get_groups(username))
    api_keys = API.get_all_keys(session)
    return render_template('api_keys.html', session=session, api_keys=api_keys, groups=groups, time_ago=time_ago, mask=mask)
 
 @bp.route("/api_keys/row")
 def api_keys_row():
+   username = session.get('username')
    api_key_hash = request.args.get('hash')
    print(api_key_hash)
    api = API(api_key_hash)
    print(api.collection._data)
-   groups = Group.get_groups()
+   groups = Group.get_groups(username)
    return render_template('api_keys/row.html', key=api.collection._data, groups=groups, time_ago=time_ago, mask=mask)
 
 @bp.route("/api_keys/enable", methods=['POST'])

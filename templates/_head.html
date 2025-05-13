@@ -35,5 +35,55 @@
       // Run on page load to handle pre-selected values
       document.addEventListener("DOMContentLoaded", toggleSleepTime);
       </script>
+<script>
+    function toggleSettingsVisibility() {
+        var cameraStatus = document.getElementById("cameraStatus").value;
+        var aiModeContainer = document.getElementById("aiFaceRecognition").parentElement;
+        var aiMode = document.getElementById("aiFaceRecognition").value;
+        var sleepTimeContainer = document.getElementById("sleepTimeContainer");
+        var faceDetectionContainer = document.getElementById("faceDetectionContainer");
+        var faceSleepTimeContainer = document.getElementById("faceSleepTimeContainer");
+
+        // Show/Hide AI Mode based on Camera Status
+        if (cameraStatus === "on") {
+            aiModeContainer.style.display = "block";
+        } else {
+            aiModeContainer.style.display = "none";
+            faceDetectionContainer.style.display = "none";
+            faceSleepTimeContainer.style.display = "none";
+        }
+
+        // Show Sleep Time if Device Status is "sleep"
+        sleepTimeContainer.style.display = (cameraStatus === "sleep") ? "block" : "none";
+
+        // Show Face Detection Sleep settings only if Camera is ON and AI Mode is ON
+        if (cameraStatus === "on" && aiMode === "on") {
+            faceDetectionContainer.style.display = "block";
+        } else {
+            faceDetectionContainer.style.display = "none";
+            faceSleepTimeContainer.style.display = "none"; // Hide Face Sleep Time if AI is off
+        }
+    }
+
+    function toggleFaceSleepTime() {
+        var sleepOnFaceDetection = document.getElementById("sleepOnFaceDetection").value;
+        var faceSleepTimeContainer = document.getElementById("faceSleepTimeContainer");
+
+        // Show Face Sleep Time input only if "Yes" is selected
+        faceSleepTimeContainer.style.display = (sleepOnFaceDetection === "yes") ? "block" : "none";
+    }
+
+    // Run the function once the page loads to set the initial visibility
+    document.addEventListener("DOMContentLoaded", function () {
+        toggleSettingsVisibility();
+    });
+
+    // Attach event listeners
+    document.getElementById("cameraStatus").addEventListener("change", toggleSettingsVisibility);
+    document.getElementById("aiFaceRecognition").addEventListener("change", toggleSettingsVisibility);
+    document.getElementById("sleepOnFaceDetection").addEventListener("change", toggleFaceSleepTime);
+</script>
+
+
     
   </head>

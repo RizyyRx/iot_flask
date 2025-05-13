@@ -12,11 +12,11 @@
 <!-- Pagination Controls -->
 <div class="d-flex justify-content-center mt-3">
     {% if page > 1 %}
-        <a href="{{ url_for('devices.gallery', page=page-1) }}" class="btn btn-primary me-2">Previous</a>
+        <a href="{{ url_for('devices.gallery',device_id=device_id, page=page-1) }}" class="btn btn-primary me-2">Previous</a>
     {% endif %}
     <span class="align-self-center">Page {{ page }} of {{ total_pages }}</span>
     {% if page < total_pages %}
-        <a href="{{ url_for('devices.gallery', page=page+1) }}" class="btn btn-primary ms-2">Next</a>
+        <a href="{{ url_for('devices.gallery',device_id=device_id, page=page+1) }}" class="btn btn-primary ms-2">Next</a>
     {% endif %}
 </div>
 
